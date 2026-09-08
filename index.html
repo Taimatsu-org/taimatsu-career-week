@@ -1206,11 +1206,11 @@ body.presenter-on .pnote { display: block; }
 
         <p><strong>Samurai Tax is that process as a web application.</strong> It runs on any
           browser already in the shop, signed in as the shop, with no dedicated
-          terminal. It needs a camera, and that is about all it asks for.</p>
+          terminal. A camera makes it fast; typing the passport in by hand still works.</p>
         <p>No setup fee, no monthly fee. We are paid out of the remittance fee the traveller
-          pays when the tax is refunded, and we hand part of that back to the shop. That is the
-          whole model: the shop earns on a tax-free sale instead of paying to process one, and
-          we earn per refund rather than per subscription.</p>
+          pays when the tax is refunded, so we earn per refund rather than per subscription.
+          That matters to how the thing is built: every completed refund is revenue, which is
+          why the money path is the part that has to reconcile.</p>
 
         <div class="flow" id="flow"></div>
 
@@ -1234,13 +1234,16 @@ body.presenter-on .pnote { display: block; }
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
           <p>From November 2026 Japan switches tax-free retail to a refund model
-            (リファンド方式): the customer pays the tax at the till and is refunded on the way
-            out of the country. Every tax-free retailer in Japan has to change how they
-            operate.</p>
-          <p>We are already running it. Samurai Tax adopted the refund method ahead of the
-            deadline rather than waiting for it, which is why the engineering problem here is
-            not "build a form" but "move somebody else's money, correctly, before the rest of
-            the industry has to".</p>
+            (リファンド方式): the customer pays the tax at the till, and is refunded once
+            customs confirms the goods have actually left Japan. Every tax-free retailer in
+            the country has to change how they operate.</p>
+          <p>We are already running it, customs half included. A refund only completes after
+            departure is confirmed, the traveller is told so at the point of sale, and the
+            window on it is ninety days.</p>
+          <p>That is the part that is genuinely hard to build, and it is why the problem here
+            is not building a form. It is tracking someone else's money correctly for three
+            months, across a border, and paying it out only once the goods are confirmed
+            gone.</p>
         </div>
       </article>
 
@@ -1487,14 +1490,16 @@ window.DATA = {
     steps: [
       { node: 'order', arrows: [],
         title: 'The order is pulled from the POS',
-        body: 'Everything starts from the sale, not from the passport. The screen ' +
-              'asks our backend for the order, and the backend is what talks to ' +
-              'Shopify POS, Square POS or Smaregi, so nobody re-keys a basket.' },
+        body: 'A refund starts from the sale. The screen asks our backend for the ' +
+              'order, and the backend is what talks to the till: Shopify POS, Square, ' +
+              'or Smaregi, which is a point-of-sale system used widely in Japanese ' +
+              'retail. Nobody retypes a basket of items.' },
       { node: 'passport', arrows: ['a1'],
         title: 'The passport is scanned in the browser',
-        body: 'This one runs entirely on the device: the reader is WebAssembly, so ' +
-              'the passport image never leaves the browser. Only the Visit Japan Web ' +
-              'QR code and returning-customer lookups call the backend at all.' },
+        body: 'This step runs entirely on the device. The reader is compiled to ' +
+              'WebAssembly, so the passport image never leaves the browser. The only ' +
+              'parts that call the backend are the QR code from Visit Japan Web, the ' +
+              'government entry service, and looking up a returning customer.' },
       { node: 'payout', arrows: ['a2'],
         title: 'Payout details are entered',
         body: 'Not a menu the customer browses. The shop is configured for one rail, ' +
