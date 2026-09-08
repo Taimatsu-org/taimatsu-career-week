@@ -973,6 +973,15 @@ body.presenter-on .pnote { display: block; }
 .grid .photo { margin: 0; }
 .photo-row { margin-top: 16px; }
 
+/* The agenda is numbered like the company facts above it, in the same mono
+   accent, and the number column is set so the two lists line up: 34 + the
+   list's 14px gap matches the facts grid's 30px column plus its 18px gap. */
+.agenda .ag-n {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 700;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+  flex-shrink: 0; width: 34px;
+}
+
 </style>
 </head>
 <body class="deck">
@@ -1070,11 +1079,11 @@ body.presenter-on .pnote { display: block; }
 
       <h2 class="h-small">Today</h2>
       <ol class="agenda">
-        <li><span class="ag-title">Who we are</span></li>
-        <li><span class="ag-title">What we build</span></li>
-        <li><span class="ag-title">The stack</span></li>
-        <li><span class="ag-title">How we work, and where we are on hiring</span></li>
-        <li><span class="ag-title">Questions</span></li>
+        <li><span class="ag-n">01</span><span class="ag-title">Who we are</span></li>
+        <li><span class="ag-n">02</span><span class="ag-title">What we build</span></li>
+        <li><span class="ag-n">03</span><span class="ag-title">The stack</span></li>
+        <li><span class="ag-n">04</span><span class="ag-title">How we work, and where we are on hiring</span></li>
+        <li><span class="ag-n">05</span><span class="ag-title">Questions</span></li>
       </ol>
     </div>
   </section>
