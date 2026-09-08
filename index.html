@@ -961,11 +961,24 @@ body.presenter-on .pnote { display: block; }
    line, so the tag goes to the far end rather than crowding the name */
 .card-team .role-head { justify-content: space-between; gap: 12px; }
 .card-team .pj-what { margin-top: 8px; }
-/* the roster is a count, so it is set in the data face rather than the prose one */
-.team-roster {
-  font-family: var(--mono); font-size: 12.5px; color: var(--ink-3);
-  margin: 8px 0 0; line-height: 1.6;
+/* The roster: headcount as a figure, then one token per role. The tokens
+   borrow the layer colours used on the stack cards, so blue and green mean
+   the same thing in both places and the team maps onto its stack by eye. */
+.roster {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 9px;
+  margin: 12px 0 0; padding-bottom: 12px; border-bottom: 1px solid var(--line);
 }
+.roster-n {
+  font-family: var(--mono); font-size: 21px; font-weight: 700;
+  color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1;
+}
+.roster-lbl {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.roster-roles { display: flex; flex-wrap: wrap; gap: 5px; flex-basis: 100%; margin-top: 9px; }
+.rl { font-size: 11px; padding: 3px 9px; }
+.rl b { font-weight: 700; opacity: .75; margin-left: 5px; }
 
 /* photographs sitting side by side in a grid take their spacing from the
    grid gap, not from their own top margin. The row itself still needs to
@@ -981,6 +994,9 @@ body.presenter-on .pnote { display: block; }
   color: var(--accent); font-variant-numeric: tabular-nums;
   flex-shrink: 0; width: 34px;
 }
+
+/* a flow node can carry two layer tags when the step straddles both */
+.node-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
 
 </style>
 </head>
@@ -1189,7 +1205,8 @@ body.presenter-on .pnote { display: block; }
         </div>
 
         <p><strong>Samurai Tax is that process as a web application.</strong> It runs on any
-          device already in the shop, with no dedicated terminal.</p>
+          browser already in the shop, signed in as the shop, with no dedicated
+          terminal. It needs a camera, and that is about all it asks for.</p>
         <p>No setup fee, no monthly fee. We are paid out of the remittance fee the traveller
           pays when the tax is refunded, and we hand part of that back to the shop. That is the
           whole model: the shop earns on a tax-free sale instead of paying to process one, and
@@ -1208,6 +1225,11 @@ body.presenter-on .pnote { display: block; }
 
         <!-- the same four steps as a list, kept in sync with the diagram -->
         <ol class="step-list" id="flowSteps"></ol>
+
+        <p>Those four are only the half that happens at the till. The tourist then
+          finishes onboarding on their own phone from the emailed link, and the money
+          moves later, in a separate settlement run against the same database. A
+          refund is a long-lived thing with several actors, not a form submission.</p>
 
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
@@ -1391,13 +1413,23 @@ window.DATA = {
 
   teams: [
     { kind: 'eng', name: 'Online Engineering', tag: 'fe',
-      roster: 'Five: one frontend, one backend, a design engineer, a manager and a scrum master.',
+      roster: { count: 5, roles: [
+        { label: 'Frontend', tag: 'fe' },
+        { label: 'Backend',  tag: 'be' },
+        { label: 'Design engineer', tag: 'neutral' },
+        { label: 'Manager',  tag: 'neutral' },
+        { label: 'Scrum master', tag: 'neutral' }
+      ] },
       owns: 'The Shopify storefronts: MUSASHI JAPAN, YOKAI JAPAN, FUJI JAPAN and client ' +
             'stores. The team carrying the migration from Liquid themes to Hydrogen.',
       chips: ['Shopify Liquid', 'Hydrogen', 'React', 'TypeScript', 'HTML / CSS'] },
 
     { kind: 'eng', name: 'Samurai Tax', tag: 'be',
-      roster: 'Four: two frontend, one backend and a manager.',
+      roster: { count: 4, roles: [
+        { label: 'Frontend', tag: 'fe', n: 2 },
+        { label: 'Backend',  tag: 'be' },
+        { label: 'Manager',  tag: 'neutral' }
+      ] },
       owns: 'The 免税 refund platform end to end: the screens a clerk uses, the phone app, ' +
             'the API, the database and keeping it running.',
       chips: ['React', 'Next.js', 'TypeScript', 'React Native', 'Expo', 'Python', 'FastAPI', 'PostgreSQL'] },
@@ -1439,32 +1471,40 @@ window.DATA = {
      preview of the stack in Part 3. Arrows are lit by the step that crosses
      them: step n lights the arrow arriving at its node. */
   flow: {
-    /* shown before the first step, and again after a reset */
-    resting: 'Four steps, about ninety seconds at the till. Play it through, or '
-           + 'step to any one of them.',
+    /* The in-shop half of a refund, in the order the app actually runs it
+       (the step machine is Order -> Passport -> Refund method -> Terms ->
+       Review). Tags say where the work happens: the passport read is pure
+       client-side WASM and never leaves the device, while the POS pull and
+       the payout setup are a frontend talking to our own backend. */
+    resting: 'The four steps a clerk works through in the shop. Play it '
+           + 'through, or step to any one of them.',
     nodes: [
-      { key: 'device',   icon: '📱', label: 'Any device<br>in the shop',   tag: 'fe' },
-      { key: 'passport', icon: '🛂', label: 'Passport read<br>by the app', tag: 'be' },
-      { key: 'pos',      icon: '🛒', label: 'Order pulled<br>from the POS', tag: 'be' },
-      { key: 'refund',   icon: '💴', label: 'Customer picks<br>a refund',  tag: 'fe' }
+      { key: 'order',    icon: '🛒', label: 'Order pulled<br>from the POS',  tags: ['fe', 'be'] },
+      { key: 'passport', icon: '🛂', label: 'Passport scanned<br>in the browser', tags: ['fe'] },
+      { key: 'payout',   icon: '💴', label: 'Payout details<br>entered',     tags: ['fe', 'be'] },
+      { key: 'nta',      icon: '🧾', label: 'Sent to the NTA,<br>refund created', tags: ['be'] }
     ],
     steps: [
-      { node: 'device', arrows: [],
-        title: 'The clerk opens it on any device in the shop',
-        body: 'A web page behind a store login, not a fixed terminal at the register. ' +
-              'If the queue is at the other end of the shop, so is the tablet.' },
+      { node: 'order', arrows: [],
+        title: 'The order is pulled from the POS',
+        body: 'Everything starts from the sale, not from the passport. The screen ' +
+              'asks our backend for the order, and the backend is what talks to ' +
+              'Shopify POS, Square POS or Smaregi, so nobody re-keys a basket.' },
       { node: 'passport', arrows: ['a1'],
-        title: 'Image recognition reads the passport',
-        body: 'The details come off the passport automatically instead of being typed. ' +
-              'This is where most of the time, and most of the typos, used to go.' },
-      { node: 'pos', arrows: ['a2'],
-        title: 'The order arrives from the POS',
-        body: 'Shopify POS, Square POS and Smaregi push the transaction straight in, ' +
-              'so nobody re-keys a basket of items.' },
-      { node: 'refund', arrows: ['a3'],
-        title: 'The customer chooses how to be refunded',
-        body: 'Credit card, bank transfer, mobile payment or cash, decided per ' +
-              'transaction, in the customer\u2019s own language.' }
+        title: 'The passport is scanned in the browser',
+        body: 'This one runs entirely on the device: the reader is WebAssembly, so ' +
+              'the passport image never leaves the browser. Only the Visit Japan Web ' +
+              'QR code and returning-customer lookups call the backend at all.' },
+      { node: 'payout', arrows: ['a2'],
+        title: 'Payout details are entered',
+        body: 'Not a menu the customer browses. The shop is configured for one rail, ' +
+              'and the customer fills in the details it needs there: currency and bank ' +
+              'account, or an emailed code to verify themselves.' },
+      { node: 'nta', arrows: ['a3'],
+        title: 'It is submitted to the National Tax Agency',
+        body: 'The backend files the purchase record with the NTA, writes the refund ' +
+              'records, and emails the tourist a link. That is where the shop\u2019s part ' +
+              'ends and the tourist\u2019s own phone takes over.' }
     ]
   },
 
@@ -1547,7 +1587,20 @@ window.DATA = {
         head.appendChild(el('span', 'role-name', t.name));
         head.appendChild(el('span', 'node-tag tag-' + t.tag, D.teamLabels[t.kind]));
         card.appendChild(head);
-        if (t.roster) card.appendChild(el('p', 'team-roster', t.roster));
+        if (t.roster) {
+          var r = el('div', 'roster');
+          r.appendChild(el('span', 'roster-n', String(t.roster.count)));
+          r.appendChild(el('span', 'roster-lbl', t.roster.count === 1 ? 'person' : 'people'));
+          var roles = el('div', 'roster-roles');
+          t.roster.roles.forEach(function (role) {
+            var tok = el('span', 'rl node-tag tag-' + role.tag, role.label);
+            /* a count only earns space when there is more than one */
+            if (role.n > 1) tok.appendChild(el('b', null, '\u00d7' + role.n));
+            roles.appendChild(tok);
+          });
+          r.appendChild(roles);
+          card.appendChild(r);
+        }
         card.appendChild(el('p', 'pj-what', t.owns));
         var chips = el('div', 'chips');
         t.chips.forEach(function (n) { chips.appendChild(el('span', 'chip', n)); });
@@ -1610,7 +1663,13 @@ window.DATA = {
       var label = el('strong');
       label.innerHTML = n.label;                 /* labels carry a <br> */
       node.appendChild(label);
-      node.appendChild(el('span', 'node-tag tag-' + n.tag, D.layerNames[n.tag]));
+      /* Some steps genuinely straddle two layers: the screen collects, our
+         backend does the talking. Show both rather than picking one. */
+      var tags = el('div', 'node-tags');
+      n.tags.forEach(function (t) {
+        tags.appendChild(el('span', 'node-tag tag-' + t, D.layerNames[t]));
+      });
+      node.appendChild(tags);
       row.appendChild(node);
     });
 
