@@ -1244,9 +1244,10 @@ body.presenter-on .pnote { display: block; }
         <!-- the same four steps as a list, kept in sync with the diagram -->
         <ol class="step-list" id="flowSteps"></ol>
 
-        <p>That is where the shop’s job ends. The rest happens on the tourist’s own
-          phone, and the money itself moves later. A refund is a long-lived thing with
-          several actors, not a form submission.</p>
+        <p>That is where the shop’s job ends. The rest happens on the tourist’s own phone,
+          and the money itself moves later. A refund is not a form submission: it is a
+          long-lived thing with several actors, and it moves through seven named states
+          before the money lands.</p>
 
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
@@ -1254,12 +1255,12 @@ body.presenter-on .pnote { display: block; }
             (リファンド方式): the customer pays the tax at the till, and is refunded once
             customs confirms the goods have actually left Japan. Every tax-free retailer in
             the country has to change how they operate.</p>
-          <p>We are already running it, customs half included. A refund only completes after
-            departure is confirmed, the traveller is told so at the point of sale, and the
-            window on it is ninety days.</p>
+          <p>We are already running it, customs half included. The filing goes to the NTA
+            at the till; it is the payout that waits for departure to be confirmed. The
+            traveller is told so at the point of sale, and the window on it is 180 days.</p>
           <p>That is the part that is genuinely hard to build, and it is why the problem here
-            is not building a form. It is tracking someone else's money correctly for three
-            months, across a border, and paying it out only once the goods are confirmed
+            is not building a form. It is tracking someone else's money correctly for up to
+            six months, across a border, and paying it out only once the goods are confirmed
             gone.</p>
         </div>
       </article>
