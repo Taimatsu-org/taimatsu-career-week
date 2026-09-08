@@ -1220,9 +1220,9 @@ body.presenter-on .pnote { display: block; }
         </div>
 
         <p><strong>SAMURAI TAX is that process as software: a web app and a mobile app.</strong>
-          The web app runs in any browser already in the shop, signed in as the shop, with no
-          dedicated terminal. A camera makes it fast; typing the passport in by hand still
-          works.</p>
+          The web app is for the shop. It runs in any browser already there, signed in as the
+          shop, with no dedicated terminal. The mobile app is for the tourist, who uses it
+          afterwards to follow the refund until the money arrives.</p>
         <p>No setup fee, no monthly fee. We are paid out of the remittance fee the traveller
           pays when the tax is refunded, so we earn per refund rather than per subscription.
           That matters to how the thing is built: every completed refund is revenue, which is
@@ -1244,10 +1244,10 @@ body.presenter-on .pnote { display: block; }
         <!-- the same four steps as a list, kept in sync with the diagram -->
         <ol class="step-list" id="flowSteps"></ol>
 
-        <p>That is where the shop’s job ends. The rest happens on the tourist’s own phone,
-          and the money itself moves later. A refund is not a form submission: it is a
-          long-lived thing with several actors, and it moves through seven named states
-          before the money lands.</p>
+        <p>Steps 1 to 4 happen at the counter in a few minutes, led by the staff. After
+          that the tourist walks away and step 5 is theirs alone. A refund is not a single
+          form: it is a slow process with several players, moving through seven named states,
+          and it only finishes once the money is really sent.</p>
 
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
@@ -1497,45 +1497,58 @@ window.DATA = {
      preview of the stack in Part 3. Arrows are lit by the step that crosses
      them: step n lights the arrow arriving at its node. */
   flow: {
-    /* The in-shop half of a refund, in the order the app runs it. Tags say
-       where the work happens: the passport read is client-side WebAssembly
-       and never leaves the device, while the order pull and the payout setup
-       are a screen talking to our own backend. */
+    /* Written in deliberately plain English: the audience is bootcamp
+       graduates, most of them new to Japan and to 免税. Steps 1-4 happen at
+       the counter and are led by the shop staff; step 5 belongs to the
+       tourist and is the reason the mobile app exists. */
     resting: 'A refund starts at the checkout counter, right after a tourist buys '
-           + 'something. Four things happen.',
+           + 'something. Two people are involved: the shop staff, who runs the '
+           + 'checkout, and the tourist, who is getting the tax back.',
     nodes: [
-      { key: 'order',    icon: '🛒', label: 'Order pulled<br>from the till',   tags: ['fe', 'be'] },
-      { key: 'passport', icon: '🛂', label: 'Passport scanned<br>in the browser', tags: ['fe'] },
-      { key: 'payout',   icon: '💴', label: 'Payout details<br>entered',       tags: ['fe', 'be'] },
-      { key: 'nta',      icon: '🧾', label: 'Filed with<br>the NTA',           tags: ['be'] }
+      { key: 'sale',     icon: '🛒', label: 'The sale appears<br>on the screen',  tags: ['fe', 'be'] },
+      { key: 'passport', icon: '🛂', label: 'The passport<br>is scanned',         tags: ['fe'] },
+      { key: 'payout',   icon: '💴', label: 'The tourist chooses<br>how to get paid', tags: ['fe', 'be'] },
+      { key: 'nta',      icon: '🧾', label: 'The refund goes<br>to the tax office', tags: ['be'] },
+      { key: 'app',      icon: '📱', label: 'The tourist follows<br>it in the app', tags: ['app'] }
     ],
     steps: [
-      { node: 'order', arrows: [],
-        title: 'The backend finds the order',
-        body: 'Nobody retypes what was bought. The shop\u2019s screen asks our backend, ' +
-              'and the backend gets the sale from the till. With Square and Smaregi, a ' +
-              'point-of-sale system common in Japanese retail, it fetches the sale live. ' +
-              'With Shopify, a separate app has already copied each order into our own ' +
-              'database, so it reads the copy it has.' },
+      { node: 'sale', arrows: [],
+        title: 'The sale appears on the screen',
+        body: 'The staff never types the shopping list again. On a Square or Smaregi ' +
+              'till, Smaregi being a checkout system used in many Japanese shops, the ' +
+              'sale jumps onto the screen by itself the moment the tourist pays. On a ' +
+              'Shopify shop, the staff types in the order number instead, and the items ' +
+              'load from a copy we already saved. Either way, the staff starts with the ' +
+              'order already filled in.' },
       { node: 'passport', arrows: ['a1'],
-        title: 'The passport is scanned in the browser',
-        body: 'The tourist scans their own passport on the shop\u2019s device. The reader ' +
-              'is compiled to WebAssembly and runs inside the page, so the passport photo ' +
-              'is never uploaded anywhere. Only two things here reach the backend: the QR ' +
-              'code from Visit Japan Web, the government entry service, and looking up a ' +
-              'returning customer. The passport details go later, at step four.' },
+        title: 'The passport is scanned',
+        body: 'The staff points the device camera at the tourist\u2019s passport and it ' +
+              'reads the details right away. If the photo is unclear, they can still type ' +
+              'it in. The scan happens inside the web page itself, so the passport photo ' +
+              'never leaves the device. The page only reaches out for two things: the ' +
+              'tourist\u2019s Visit Japan Web QR code, which is their official arrival ' +
+              'record, and their saved details if they have shopped with us before.' },
       { node: 'payout', arrows: ['a2'],
-        title: 'The tourist enters payout details',
-        body: 'Each shop is set up for one payout method, so there is no menu to browse. ' +
-              'It is either a bank transfer, where they give a currency and an account and ' +
-              'are paid through Wise, or an emailed code to verify themselves.' },
+        title: 'The tourist chooses how to get paid',
+        body: 'Now the staff hands the device to the tourist. There is no long menu: each ' +
+              'shop offers just one payout method, so the tourist sees one short form. It ' +
+              'is either a bank transfer, where they enter a currency and an account and ' +
+              'the money is sent through Wise, or a code sent to their email to prove who ' +
+              'they are.' },
       { node: 'nta', arrows: ['a3'],
-        title: 'The refund is filed with the National Tax Agency',
-        body: 'The backend sends the purchase record to the NTA, Japan\u2019s tax authority, ' +
-              'saves the refund records, and emails the tourist. That first email only says ' +
-              'we have it and are processing it. The money then waits on customs confirming ' +
-              'the goods really left the country; once they have, a bank payout comes as a ' +
-              'separate email from Wise, typically a week or two after the purchase.' }
+        title: 'The refund is sent to the tax office',
+        body: 'The tourist taps submit and sees a done screen. In the background the ' +
+              'purchase record goes to the NTA, Japan\u2019s tax authority, and the refund ' +
+              'is saved. A first email arrives, but it only says we have your request and ' +
+              'are processing it. No money yet. If it is a bank transfer, Wise emails the ' +
+              'tourist separately, a week or two later, to actually send the money.' },
+      { node: 'app', arrows: ['a4'],
+        title: 'The tourist follows it in the app',
+        body: 'That email also invites the tourist to the SAMURAI TAX app. They sign in ' +
+              'with a code sent to their email, no password needed, and see each refund\u2019s ' +
+              'status: still processing, or approved and paid. The sale took seconds at the ' +
+              'till, but the refund moves over days or weeks. The app lets the tourist ' +
+              'follow along without going back to the shop.' }
     ]
   },
 
