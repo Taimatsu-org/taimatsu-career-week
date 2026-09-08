@@ -1228,6 +1228,8 @@ body.presenter-on .pnote { display: block; }
           That matters to how the thing is built: every completed refund is revenue, which is
           why the money path is the part that has to reconcile.</p>
 
+        <h4 class="h-small">How a SAMURAI TAX refund works</h4>
+
         <div class="flow" id="flow"></div>
 
         <div class="flow-controls">
@@ -1242,10 +1244,9 @@ body.presenter-on .pnote { display: block; }
         <!-- the same four steps as a list, kept in sync with the diagram -->
         <ol class="step-list" id="flowSteps"></ol>
 
-        <p>Those four are only the half that happens at the till. The tourist then
-          finishes onboarding on their own phone from the emailed link, and the money
-          moves later, in a separate settlement run against the same database. A
-          refund is a long-lived thing with several actors, not a form submission.</p>
+        <p>That is where the shop’s job ends. The rest happens on the tourist’s own
+          phone, and the money itself moves later. A refund is a long-lived thing with
+          several actors, not a form submission.</p>
 
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
@@ -1495,42 +1496,44 @@ window.DATA = {
      preview of the stack in Part 3. Arrows are lit by the step that crosses
      them: step n lights the arrow arriving at its node. */
   flow: {
-    /* The in-shop half of a refund, in the order the app actually runs it
-       (the step machine is Order -> Passport -> Refund method -> Terms ->
-       Review). Tags say where the work happens: the passport read is pure
-       client-side WASM and never leaves the device, while the POS pull and
-       the payout setup are a frontend talking to our own backend. */
-    resting: 'The four steps a clerk works through in the shop. Play it '
-           + 'through, or step to any one of them.',
+    /* The in-shop half of a refund, in the order the app runs it. Tags say
+       where the work happens: the passport read is client-side WebAssembly
+       and never leaves the device, while the order pull and the payout setup
+       are a screen talking to our own backend. */
+    resting: 'A refund starts at the checkout counter, right after a tourist buys '
+           + 'something. Four things happen.',
     nodes: [
-      { key: 'order',    icon: '🛒', label: 'Order pulled<br>from the POS',  tags: ['fe', 'be'] },
+      { key: 'order',    icon: '🛒', label: 'Order pulled<br>from the till',   tags: ['fe', 'be'] },
       { key: 'passport', icon: '🛂', label: 'Passport scanned<br>in the browser', tags: ['fe'] },
-      { key: 'payout',   icon: '💴', label: 'Payout details<br>entered',     tags: ['fe', 'be'] },
-      { key: 'nta',      icon: '🧾', label: 'Sent to the NTA,<br>refund created', tags: ['be'] }
+      { key: 'payout',   icon: '💴', label: 'Payout details<br>entered',       tags: ['fe', 'be'] },
+      { key: 'nta',      icon: '🧾', label: 'Filed with<br>the NTA',           tags: ['be'] }
     ],
     steps: [
       { node: 'order', arrows: [],
-        title: 'The order is pulled from the POS',
-        body: 'A refund starts from the sale. The screen asks our backend for the ' +
-              'order, and the backend is what talks to the till: Shopify POS, Square, ' +
-              'or Smaregi, which is a point-of-sale system used widely in Japanese ' +
-              'retail. Nobody retypes a basket of items.' },
+        title: 'The backend finds the order',
+        body: 'Nobody retypes what was bought. The shop\u2019s screen asks our backend, ' +
+              'and the backend gets the sale from the till. With Square and Smaregi, a ' +
+              'point-of-sale system common in Japanese retail, it fetches the sale live. ' +
+              'With Shopify, a separate app has already copied each order into our own ' +
+              'database, so it reads the copy it has.' },
       { node: 'passport', arrows: ['a1'],
         title: 'The passport is scanned in the browser',
-        body: 'This step runs entirely on the device. The reader is compiled to ' +
-              'WebAssembly, so the passport image never leaves the browser. The only ' +
-              'parts that call the backend are the QR code from Visit Japan Web, the ' +
-              'government entry service, and looking up a returning customer.' },
+        body: 'The tourist scans their own passport on the shop\u2019s device. The reader ' +
+              'is compiled to WebAssembly and runs inside the page, so the passport photo ' +
+              'is never uploaded anywhere. Only two things here reach the backend: the QR ' +
+              'code from Visit Japan Web, the government entry service, and looking up a ' +
+              'returning customer. The passport details go later, at step four.' },
       { node: 'payout', arrows: ['a2'],
-        title: 'Payout details are entered',
-        body: 'Not a menu the customer browses. The shop is configured for one rail, ' +
-              'and the customer fills in the details it needs there: currency and bank ' +
-              'account, or an emailed code to verify themselves.' },
+        title: 'The tourist enters payout details',
+        body: 'Each shop is set up for one payout method, so there is no menu to browse. ' +
+              'It is either a bank transfer, where they give a currency and an account and ' +
+              'are paid through Wise, or an emailed code to verify themselves.' },
       { node: 'nta', arrows: ['a3'],
-        title: 'It is submitted to the National Tax Agency',
-        body: 'The backend files the purchase record with the NTA, writes the refund ' +
-              'records, and emails the tourist a link. That is where the shop\u2019s part ' +
-              'ends and the tourist\u2019s own phone takes over.' }
+        title: 'The refund is filed with the National Tax Agency',
+        body: 'The backend sends the purchase record to the NTA, Japan\u2019s tax authority, ' +
+              'saves the refund records, and emails the tourist. That first email only says ' +
+              'we have it and are processing it. For a bank payout, Wise emails them ' +
+              'separately a week or two later to actually release the money.' }
     ]
   },
 
