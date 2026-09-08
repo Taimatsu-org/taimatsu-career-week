@@ -1182,9 +1182,9 @@ body.presenter-on .pnote { display: block; }
         <p>How we build it is changing. The shops running today are Liquid themes, Shopify’s
           own templating language. New work goes into <strong>Hydrogen</strong>, Shopify’s
           React framework: we keep Shopify’s checkout and inventory and talk to them over the
-          Storefront API, but the storefront itself becomes ours to build, and to run. That is
-          why Online Engineering now has a backend engineer on a team that used to write no
-          server code at all.</p>
+          Storefront API, but the storefront itself becomes ours to build, and to run. The
+          team was already writing server code for custom Shopify apps and for automation used
+          elsewhere in the company; Hydrogen adds the storefront to that list.</p>
       </article>
 
       <article class="chunk" id="s2-2">
@@ -1275,9 +1275,11 @@ body.presenter-on .pnote { display: block; }
 
         <div class="callout callout-key">
           <p class="callout-title">Key point</p>
-          <p>Online DX wrote almost no server code, because Shopify already had. Samurai Tax
-            writes all of it, because nobody had. Neither was a technology preference; both
-            fall straight out of what the product is.</p>
+          <p>Online DX does not rebuild what Shopify already provides: checkout, payment and
+            inventory come from the platform. What the team writes is the storefront, custom
+            Shopify apps, and automation for other departments across the company. Samurai Tax
+            writes everything, because nobody had built it. Neither is a technology preference;
+            both fall out of what the product is.</p>
           <p>What is interesting is that the two are now converging from opposite ends: Hydrogen
             brings React and TypeScript to the storefront side, so an engineer can move between
             our two products in a way that was not true a year ago.</p>
