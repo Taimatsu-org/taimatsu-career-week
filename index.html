@@ -1248,9 +1248,6 @@ body.presenter-on .pnote { display: block; }
 
         <div class="step-caption" id="flowCaption"></div>
 
-        <!-- the same four steps as a list, kept in sync with the diagram -->
-        <ol class="step-list" id="flowSteps"></ol>
-
         <p>Steps 1 to 4 happen at the counter in a few minutes, led by the staff. After
           that the tourist walks away and step 5 is theirs alone. A refund is not a single
           form: it is a slow process with several players, moving through seven named states,
@@ -1798,33 +1795,6 @@ window.DATA = {
     $('#flow').appendChild(row);
   }
 
-  /* The same four steps as a list. Operable by pointer AND keyboard — these
-     were click-only in an earlier version of the workshop deck and that was
-     a genuine accessibility bug, so do not drop the keydown handler. */
-  function renderSteps() {
-    var box = $('#flowSteps');
-    box.innerHTML = '';
-    STEPS.forEach(function (s, i) {
-      var li = el('li');
-      var d  = el('div');
-      d.appendChild(el('span', 'sl-title', s.title));
-      d.appendChild(el('span', 'sl-body', s.body));
-      li.appendChild(d);
-
-      li.setAttribute('role', 'button');
-      li.setAttribute('tabindex', '0');
-      function choose() { stop(); setStep(i); }
-      li.addEventListener('click', choose);
-      li.addEventListener('keydown', function (ev) {
-        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
-          ev.preventDefault();
-          choose();
-        }
-      });
-      box.appendChild(li);
-    });
-  }
-
   function setStep(i) {
     flow.step = i;
     var target = i >= 0 ? STEPS[i] : null;
@@ -1838,10 +1808,6 @@ window.DATA = {
     document.querySelectorAll('#flow [data-arrow]').forEach(function (a) {
       a.classList.toggle('is-active',
         !!target && target.arrows.indexOf(a.getAttribute('data-arrow')) !== -1);
-    });
-
-    document.querySelectorAll('#flowSteps li').forEach(function (li, idx) {
-      li.classList.toggle('is-active', idx === i);
     });
 
     var cap = $('#flowCaption');
@@ -2116,7 +2082,6 @@ window.DATA = {
   renderTeams();
   renderProjects();
   renderFlow();
-  renderSteps();
   initFlowControls();
   setStep(-1);
 
