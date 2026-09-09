@@ -1008,6 +1008,9 @@ body.presenter-on .pnote { display: block; }
 /* a flow node can carry two layer tags when the step straddles both */
 .node-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
 
+/* a chip row followed by prose needs to clear it; .chips only has a top margin */
+.chips + p { margin-top: 14px; }
+
 </style>
 </head>
 <body class="deck">
@@ -1354,21 +1357,92 @@ body.presenter-on .pnote { display: block; }
       </article>
 
       <article class="chunk" id="s4-2">
-        <h3><span class="num">4.2</span> <span>What we look for when we open a role</span></h3>
+        <h3><span class="num">4.2</span> <span>What we look for</span></h3>
         <p>Something you built end to end and can walk someone through, including the parts
           that went wrong. Evidence you can read a codebase you did not write. And the habit
           of asking what happens when the input is wrong, because on one of our two products
           that question is the whole job.</p>
-        <p>What we usually open, when we open something, is frontend and backend roles where
-          some mobile experience is a real advantage. So React, TypeScript and eventually
-          React Native are the sensible things to put your next few months into. That would
-          be our advice whether or not we were the ones hiring.</p>
+        <p>More generally we hire frontend and backend engineers, and mobile experience is
+          a real advantage. So React, TypeScript and eventually React Native are sensible
+          things to put your next few months into. That would be our advice whether or not we
+          were the ones hiring.</p>
       </article>
 
       <article class="chunk" id="s4-3">
+        <h3><span class="num">4.3</span> <span>The role that is open now</span></h3>
+
+        <div class="callout callout-key">
+          <p class="callout-title">Open</p>
+          <p><strong>Creative Front-End Engineer (UX Engineer).</strong> For someone who works
+            comfortably across both design and code: you can take an idea or a reference and
+            turn it into a polished, working experience, and you own the visual craft from
+            concept to launch.</p>
+        </div>
+
+        <p>Much of the work is Shopify storefronts, but not all of it. You would also build
+          outside e-commerce: custom sites, interactive experiences, internal tools, and
+          prototypes for new ideas. You would work closely with our designer, the front-end
+          developers and the marketing team, with the support of a team and the freedom to
+          shape the experience. We value people who bring their own ideas and can show them
+          as working prototypes.</p>
+
+        <h4 class="h-small">What you would do</h4>
+        <ul>
+          <li>Design and build custom storefronts and websites, from concept to launch.</li>
+          <li>Turn ideas and references into polished, working interfaces.</li>
+          <li>Prototype and iterate quickly.</li>
+          <li>Build reusable components and features across our brands.</li>
+          <li>Take on projects beyond e-commerce: interactive sites, tools, experiments.</li>
+          <li>Pay close attention to layout, motion, interaction and detail.</li>
+          <li>Keep it fast, responsive and consistent across devices.</li>
+        </ul>
+
+        <h4 class="h-small">Must have</h4>
+        <ul>
+          <li>Strong front-end skills: HTML, CSS, JavaScript, and a modern framework (React,
+            Next.js, Vue or similar).</li>
+          <li>A portfolio of creative, visually considered work.</li>
+          <li>A good eye for design, and the ability to build visually and work
+            independently.</li>
+          <li>Professional-level English.</li>
+        </ul>
+
+        <h4 class="h-small">Nice to have</h4>
+        <p>Any of these is a plus. None are required.</p>
+        <div class="chips">
+          <span class="chip">Shopify</span>
+          <span class="chip">Liquid</span>
+          <span class="chip">Hydrogen</span>
+          <span class="chip">Webflow</span>
+          <span class="chip">REST</span>
+          <span class="chip">GraphQL</span>
+          <span class="chip">GSAP</span>
+          <span class="chip">Framer Motion</span>
+          <span class="chip">WebGL</span>
+          <span class="chip">Git</span>
+          <span class="chip">CI / CD</span>
+          <span class="chip">Business-level Japanese</span>
+        </div>
+        <p>Also useful: understanding the core e-commerce flows of cart, checkout and order
+          handling, and any experience with cross-border e-commerce, Japanese crafts or
+          inbound-tourism products.</p>
+
+        <h4 class="h-small">Why you might like it here</h4>
+        <ul>
+          <li>Real ownership of how our work looks and feels.</li>
+          <li>Variety, across e-commerce and everything next to it.</li>
+          <li>Room to experiment and bring your own ideas.</li>
+          <li>A small team, where what you build ships.</li>
+          <li>Products with genuine craft and a story behind them.</li>
+        </ul>
+      </article>
+
+      <article class="chunk" id="s4-4">
         <div class="callout callout-close">
           <p class="callout-title">Where we actually are</p>
-          <p>We have no open positions today, but we hire steadily through the year.</p>
+          <p>We have just hired someone from Le Wagon, so this is not a hypothetical: people
+            from your cohort do end up here. Beyond the role above, we expect to be hiring
+            again towards the new year.</p>
         </div>
       </article>
 
